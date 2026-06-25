@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-mono-pf {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+body {
+  background-color: #1A1D24;
+  color: #E8E6E1;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+::selection {
+  background: #FFCC33;
+  color: #1A1D24;
+}
