@@ -43,11 +43,18 @@ async function searchTcgdexCard(name, number) {
   const trimmedName = (name || "").trim();
   if (!trimmedName) return { status: "empty" };
 
-  try {
-    const res = await fetch(`https://api.tcgdex.net/v2/en/cards?name=${encodeURIComponent(trimmedName)}`);
-    if (!res.ok) return { status: "error" };
+  async function tryLang(lang) {
+    const res = await fetch(`https://api.tcgdex.net/v2/${lang}/cards?name=${encodeURIComponent(trimmedName)}`);
+    if (!res.ok) return null;
     const list = await res.json();
-    if (!Array.isArray(list) || list.length === 0) return { status: "notfound" };
+    if (!Array.isArray(list) || list.length === 0) return null;
+    return list;
+  }
+
+  try {
+    let list = await tryLang("fr");
+    if (!list) list = await tryLang("en");
+    if (!list) return { status: "notfound" };
 
     let candidates = list;
     if (number) {
@@ -57,7 +64,7 @@ async function searchTcgdexCard(name, number) {
     }
 
     const best = candidates[0];
-    const detailRes = await fetch(`https://api.tcgdex.net/v2/en/cards/${best.id}`);
+    const detailRes = await fetch(`https://api.tcgdex.net/v2/fr/cards/${best.id}`);
     if (!detailRes.ok) return { status: "error" };
     const detail = await detailRes.json();
 
@@ -300,8 +307,7 @@ export default function PokeFolioPage() {
             ))}
           </div>
         )}
-
-        {/* Grid / Empty state */}
+{/* Grid / Empty state */}
         {loaded && cards.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-[#2E323C] rounded-2xl">
             <p className="font-display text-lg font-semibold mb-1.5">Le classeur est vide</p>
